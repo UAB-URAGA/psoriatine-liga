@@ -104,13 +104,13 @@
       productVersion: "0.2.1"
     };
 
-    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-      config.devicePixelRatio = 1;
-      container.classList.add("unity-mobile");
-    } else {
-      canvas.style.width = "100%";
-      canvas.style.height = "100%";
-    }
+	if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+	  config.devicePixelRatio = window.devicePixelRatio;
+	  container.classList.add("unity-mobile");
+	} else {
+	  canvas.style.width = "100%";
+	  canvas.style.height = "100%";
+	}
 
     function resizeCanvasToDisplaySize() {
       const rect = canvas.getBoundingClientRect();
@@ -128,13 +128,13 @@
     }
 
     window.addEventListener('resize', function () {
-      resizeCanvasToDisplaySize();
+      //resizeCanvasToDisplaySize();
       updateOrientationOverlay();
     });
 
     window.addEventListener('orientationchange', function () {
       setTimeout(function () {
-        resizeCanvasToDisplaySize();
+        //resizeCanvasToDisplaySize();
         updateOrientationOverlay();
       }, 200);
     });
@@ -144,7 +144,7 @@
     var script = document.createElement("script");
     script.src = loaderUrl;
     script.onload = function () {
-      resizeCanvasToDisplaySize();
+      //resizeCanvasToDisplaySize();
       updateOrientationOverlay();
 
       createUnityInstance(canvas, config, function (progress) {
