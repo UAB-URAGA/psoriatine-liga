@@ -5,9 +5,12 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Unity WebGL Player | Psoriatic Arthritis Inforgaphics</title>
   <link rel="shortcut icon" href="TemplateData/favicon.ico">
+
+  <!-- Mobile viewport & iOS fullscreen -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <style>
     html, body {
       margin: 0;
@@ -25,8 +28,8 @@
       left: env(safe-area-inset-left);
     }
     #unity-canvas {
-      width: 100dvw;
-      height: 100dvh;
+      width: 100%;
+      height: 100%;
       display: block;
     }
     #unity-loading-bar {
@@ -38,9 +41,24 @@
       z-index: 5;
       display: none;
     }
-    #unity-logo { width: 100%; height: 90px; background: url('TemplateData/unity-logo-dark.png') no-repeat center/contain; margin-bottom: 12px; }
-    #unity-progress-bar-empty { width: 100%; height: 18px; background: rgba(255,255,255,0.15); border-radius: 9px; overflow: hidden; }
-    #unity-progress-bar-full { width: 0%; height: 100%; background: #4af; }
+    #unity-logo {
+      width: 100%;
+      height: 90px;
+      background: url('TemplateData/unity-logo-dark.png') no-repeat center/contain;
+      margin-bottom: 12px;
+    }
+    #unity-progress-bar-empty {
+      width: 100%;
+      height: 18px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 9px;
+      overflow: hidden;
+    }
+    #unity-progress-bar-full {
+      width: 0%;
+      height: 100%;
+      background: #4af;
+    }
     #fs {
       position: fixed;
       right: 12px;
@@ -67,7 +85,9 @@
       padding: 24px;
       font: 600 18px system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
     }
-    .unity-mobile #unity-canvas { image-rendering: -webkit-optimize-contrast; }
+    .unity-mobile #unity-canvas {
+      image-rendering: -webkit-optimize-contrast;
+    }
   </style>
   <link rel="stylesheet" href="TemplateData/style.css">
 </head>
@@ -104,22 +124,12 @@
       productVersion: "0.2.1"
     };
 
-	if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-	  config.devicePixelRatio = window.devicePixelRatio;
-	  container.classList.add("unity-mobile");
-	} else {
-	  canvas.style.width = "100%";
-	  canvas.style.height = "100%";
-	}
+    // Always set correct DPR (fixes pixelation on mobile & shrinking on desktop)
+    config.devicePixelRatio = window.devicePixelRatio;
 
-    function resizeCanvasToDisplaySize() {
-      const rect = canvas.getBoundingClientRect();
-      const cssWidth = Math.round(rect.width);
-      const cssHeight = Math.round(rect.height);
-      if (canvas.width !== cssWidth || canvas.height !== cssHeight) {
-        canvas.width = cssWidth;
-        canvas.height = cssHeight;
-      }
+    // Mark as mobile if needed (affects CSS only)
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      container.classList.add("unity-mobile");
     }
 
     function updateOrientationOverlay() {
@@ -127,16 +137,9 @@
       rotateOverlay.style.display = isPortrait ? 'flex' : 'none';
     }
 
-    window.addEventListener('resize', function () {
-      //resizeCanvasToDisplaySize();
-      updateOrientationOverlay();
-    });
-
+    window.addEventListener('resize', updateOrientationOverlay);
     window.addEventListener('orientationchange', function () {
-      setTimeout(function () {
-        //resizeCanvasToDisplaySize();
-        updateOrientationOverlay();
-      }, 200);
+      setTimeout(updateOrientationOverlay, 200);
     });
 
     loadingBar.style.display = "block";
@@ -144,9 +147,7 @@
     var script = document.createElement("script");
     script.src = loaderUrl;
     script.onload = function () {
-      //resizeCanvasToDisplaySize();
       updateOrientationOverlay();
-
       createUnityInstance(canvas, config, function (progress) {
         progressBarFull.style.width = (100 * progress) + "%";
       }).then(function (unityInstance) {
