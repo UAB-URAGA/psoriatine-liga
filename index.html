@@ -153,14 +153,18 @@
         progressBarFull.style.width = (100 * progress) + "%";
       }).then(function (unityInstance) {
         loadingBar.style.display = "none";
-        document.getElementById('fs').addEventListener('click', async function () {
-          try {
-            if (canvas.requestFullscreen) await canvas.requestFullscreen();
-            if (screen.orientation && screen.orientation.lock) {
-              try { await screen.orientation.lock('landscape'); } catch (e) {}
-            }
-          } catch (e) {}
-        });
+      document.getElementById('fs').addEventListener('click', async function () {
+		  if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+			alert("On iPhone/iPad, fullscreen is only available when added to Home Screen.\nTap Share → Add to Home Screen.");
+		  } else {
+			try {
+			  if (canvas.requestFullscreen) await canvas.requestFullscreen();
+			  if (screen.orientation && screen.orientation.lock) {
+				try { await screen.orientation.lock('landscape'); } catch (e) {}
+			  }
+			} catch (e) {}
+		  }
+		});
       }).catch(function (message) {
         alert(message);
       });
